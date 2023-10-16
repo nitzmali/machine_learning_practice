@@ -538,6 +538,8 @@ Thumbs.db
 
 # Data files, usually ignore all data files, but you can specify specific file types to ignore
 data/*
+data/**
+**/data/*
 images/*
 datasets/*
 !data/.gitkeep   # .gitkeep file helps you keep track of empty directories as git doesn't track them
