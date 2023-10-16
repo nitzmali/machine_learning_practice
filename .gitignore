@@ -554,6 +554,9 @@ env/
 
 # Ignore CSV files (if needed)
 *.csv
+*.mp3
+*.wav
+*.midi
 
 # Ignore Excel files (if needed)
 *.xls
