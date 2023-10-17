@@ -1,0 +1,40 @@
+class AnalysisDataAndFitLinearRegression:
+
+    def __init__(self):
+        self.version = 1
+
+    def analyse_and_fit_lrm(self, path):
+        # a path to a dataset is "./data/realest.csv"
+        # dataset can be loaded by uncommenting the line bellow
+
+        df = pd.read_csv(path,index_col = False)
+        summary_dict=dict()
+        stats_df_filtered = df[(df["Bedroom"]==4.0) & (df["Bathroom"]==2.0)]
+        statistics_list = [stats_df_filtered["Tax"].describe()["mean"],stats_df_filtered["Tax"].describe()["std"],stats_df_filtered["Tax"].median(),stats_df_filtered["Tax"].describe()["min"],stats_df_filtered["Tax"].describe()["max"]]
+        data_frame =df[df["Space"]>800].sort_values(by="Price",ascending=False)
+        summary_dict["statistics"]=statistics_list
+        summary_dict["date_frame"]=data_frame
+        summary_dict["number_of_observations"]=df[df["Lot"]>=df["Lot"].quantile(.8)].shape[0]
+
+        df_filtered = self.__listwise_deletion(df)
+        X=df_filtered[[ 'Bedroom', 'Space', 'Room', 'Lot', 'Tax', 'Bathroom', 'Garage',
+            'Condition']]
+        y = df_filtered["Price"]
+        regr = LinearRegression()
+        regr.fit(X, y)
+        test_dict = {'Bedroom':3.0, 'Space':1500.0, 'Room':8.0, 'Lot':40.0, 'Tax':1000.0, 'Bathroom':2.0, 'Garage':1.0,
+            'Condition':0.0}
+        test_df = pd.DataFrame([test_dict])
+        y_pred = regr.predict(test_df)
+        df_coeff = pd.DataFrame(zip(X.columns, regr.coef_))
+        Intercept = regr.intercept_
+        intercept_dict = {"Intercept":Intercept}
+        coeff_dict= dict(zip(df_coeff[0], df_coeff[1]))
+        intercept_dict.update(coeff_dict)
+        regression_dict = {"model_parameters":coeff_dict,"price_prediction":y_pred[0]}
+        return summary_dict,regression_dict
+
+    def __listwise_deletion(self, data: pd.DataFrame):
+        return data.dropna()
+    
+    
